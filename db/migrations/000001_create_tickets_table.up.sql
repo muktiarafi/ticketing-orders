@@ -1,0 +1,6 @@
+CREATE TABLE tickets (
+    id INTEGER UNIQUE PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    price DECIMAL NOT NULL,
+    version INTEGER DEFAULT 1
+);

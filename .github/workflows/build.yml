@@ -1,0 +1,41 @@
+name: Go
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+
+      - name: download dependencies
+        run: go mod download
+
+      - name: Test
+        run: go test -v ./...
+
+      - name: login to dockerhub
+        uses: docker/login-action@v1
+        with:
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_PASSWORD }}'
+
+      - name: build image
+        run: |
+          docker build \
+          -t muktiarafi/ticketing-orders:latest \
+          -t muktiarafi/ticketing-orders:$GITHUB_SHA \
+          .
+
+      - name: push
+        run: |
+          docker push muktiarafi/ticketing-orders:latest
+          docker push muktiarafi/ticketing-orders:$GITHUB_SHA
