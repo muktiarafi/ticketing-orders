@@ -24,6 +24,7 @@ func (c *OrderConsumer) TicketCreated(msg *message.Message) error {
 	fmt.Println("received event from topic ", common.TicketCreated)
 	var ticketCreatedData types.TicketCreatedEvent
 	if err := ticketCreatedData.Unmarshal(msg.Payload); err != nil {
+		msg.Nack()
 		return &common.Error{Op: "OrderConsumer.TicketCreated", Err: err}
 	}
 
@@ -34,6 +35,7 @@ func (c *OrderConsumer) TicketCreated(msg *message.Message) error {
 	}
 
 	if _, err := c.TicketRepository.Insert(ticket); err != nil {
+		msg.Nack()
 		return &common.Error{Op: "OrderConsumer.TicketCreated", Err: err}
 	}
 
@@ -46,6 +48,7 @@ func (c *OrderConsumer) TicketUpdated(msg *message.Message) error {
 	fmt.Println("received event from topic ", common.TIcketUpdated)
 	ticketUpdatedData := new(types.TicketUpdatedEvent)
 	if err := ticketUpdatedData.Unmarshal(msg.Payload); err != nil {
+		msg.Nack()
 		return &common.Error{Op: "OrderConsumer.TicketUpdated", Err: err}
 	}
 
@@ -57,6 +60,7 @@ func (c *OrderConsumer) TicketUpdated(msg *message.Message) error {
 	}
 
 	if _, err := c.TicketRepository.UpdateByEvent(ticket); err != nil {
+		msg.Nack()
 		return &common.Error{Op: "OrderConsumer.TicketUpdated", Err: err}
 	}
 
