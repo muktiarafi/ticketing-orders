@@ -108,7 +108,7 @@ func (r *TicketRepositoryImpl) UpdateByEvent(ticket *entity.Ticket) (*entity.Tic
 	ctx, cancel := newDBContext()
 	defer cancel()
 
-	stmt := `INSERT INTO tickets
+	stmt := `UPDATE tickets
 	SET title = $1, price =$2, version = $3
 	WHERE id = $4 AND version = $5
 	RETURNING *`
