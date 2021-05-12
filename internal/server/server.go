@@ -40,7 +40,7 @@ func SetupServer() *echo.Echo {
 	orderService := service.NewOrderService(orderRepository, ticketRepository)
 
 	producerBrokers := []string{config.NewProducerBroker()}
-	commonPublisher, err := common.CreatePublisher(producerBrokers, watermill.NewStdLogger(false, false))
+	commonPublisher, err := common.NewPublisher(producerBrokers, watermill.NewStdLogger(false, false))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,8 +49,13 @@ func SetupServer() *echo.Echo {
 	orderHandler := handler.NewOrderHandler(orderService, orderProducer)
 	orderHandler.Route(e)
 
-	consumerBrokers := []string{config.NewConsumerBroker()}
-	subscriber, err := common.CreateSubscriber(consumerBrokers, "orders-service", watermill.NewStdLogger(false, false))
+	subscriberConfig := &common.SubscriberConfig{
+		Brokers:       []string{config.NewConsumerBroker()},
+		ConsumerGroup: "orders-service",
+		FromBeginning: true,
+		LoggerAdapter: watermill.NewStdLogger(false, false),
+	}
+	subscriber, err := common.NewSubscriber(subscriberConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
