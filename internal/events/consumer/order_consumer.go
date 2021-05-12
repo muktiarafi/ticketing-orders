@@ -60,7 +60,12 @@ func (c *OrderConsumer) TicketUpdated(msg *message.Message) error {
 	}
 
 	if _, err := c.TicketRepository.UpdateByEvent(ticket); err != nil {
-		msg.Nack()
+		er, _ := err.(*common.Error)
+		if er.Code == common.ECONCLICT {
+			msg.Ack()
+		} else {
+			msg.Nack()
+		}
 		return &common.Error{Op: "OrderConsumer.TicketUpdated", Err: err}
 	}
 

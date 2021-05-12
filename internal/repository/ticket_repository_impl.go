@@ -130,7 +130,7 @@ func (r *TicketRepositoryImpl) UpdateByEvent(ticket *entity.Ticket) (*entity.Tic
 	); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, &common.Error{
-				Code:    common.ENOTFOUND,
+				Code:    common.ECONCLICT,
 				Op:      "OrderRepository.FindOne",
 				Message: "Ticket version is out of sync",
 				Err:     err,
