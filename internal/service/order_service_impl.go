@@ -3,6 +3,7 @@ package service
 import (
 	"database/sql"
 	"errors"
+	"time"
 
 	common "github.com/muktiarafi/ticketing-common"
 	"github.com/muktiarafi/ticketing-orders/internal/entity"
@@ -51,9 +52,10 @@ func (s *OrderServiceImpl) Create(userID int64, ticketID int64) (*entity.Order, 
 	}
 
 	newOrder := &entity.Order{
-		Status: CREATED,
-		UserID: userID,
-		Ticket: ticket,
+		Status:    CREATED,
+		UserID:    userID,
+		Ticket:    ticket,
+		ExpiresAt: time.Now().Add(time.Second * 60),
 	}
 
 	newOrder, err = s.OrderRepository.Insert(newOrder)
