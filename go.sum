@@ -484,6 +484,8 @@ github.com/muktiarafi/ticketing-common v1.0.17 h1:uRupaLWGennBC8dA44DjZKbG9U4w9+
 github.com/muktiarafi/ticketing-common v1.0.17/go.mod h1:thJRlnynKkwRQMGkOS1AUX1nfjkeR3h23uMCT2DjQNk=
 github.com/muktiarafi/ticketing-common v1.0.18 h1:Jr6dzPDXBw7YO3iZAtKMcFF/kVpZtI+TUjTFOKFFmPo=
 github.com/muktiarafi/ticketing-common v1.0.18/go.mod h1:S+2q0fbM7n2sH8jXc2FZy960YzTn4yfXpMuxvBvtzZ0=
+github.com/muktiarafi/ticketing-common v1.0.19 h1:xJjwCPpSdWZqtQcIpWLKBX1CMwB7qC7dr1Hg1OnFH10=
+github.com/muktiarafi/ticketing-common v1.0.19/go.mod h1:S+2q0fbM7n2sH8jXc2FZy960YzTn4yfXpMuxvBvtzZ0=
 github.com/mutecomm/go-sqlcipher/v4 v4.4.0/go.mod h1:PyN04SaWalavxRGH9E8ZftG6Ju7rsPrGmQRjrEaVpiY=
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
@@ -688,6 +690,8 @@ golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2/go.mod h1:T9bdIzuCu7OtxOm
 golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b/go.mod h1:T9bdIzuCu7OtxOm1hfPfRQxPLYneinmdGuTeoZ9dtd4=
 golang.org/x/crypto v0.0.0-20210506145944-38f3c27a63bf h1:B2n+Zi5QeYRDAEodEu72OS36gmTWjgpXr2+cWcBW90o=
 golang.org/x/crypto v0.0.0-20210506145944-38f3c27a63bf/go.mod h1:P+XmwS30IXTQdn5tA2iutPOUgjI07+tq3H3K9MVA1s8=
+golang.org/x/crypto v0.0.0-20210513122933-cd7d49e622d5 h1:N6Jp/LCiEoIBX56BZSR2bepK5GtbSC2DDOYT742mMfE=
+golang.org/x/crypto v0.0.0-20210513122933-cd7d49e622d5/go.mod h1:P+XmwS30IXTQdn5tA2iutPOUgjI07+tq3H3K9MVA1s8=
 golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
