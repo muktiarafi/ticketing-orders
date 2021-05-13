@@ -241,3 +241,42 @@ func (r *OrderRepositoryImpl) Update(order *entity.Order) (*entity.Order, error)
 
 	return updatedOrder, nil
 }
+
+func (r *OrderRepositoryImpl) UpdateOnEvent(order *entity.Order) (*entity.Order, error) {
+	ctx, cancel := newDBContext()
+	defer cancel()
+
+	stmt := `UPDATE orders
+	SET status = $1, version = $2
+	WHERE id = $3 AND version = $4
+	RETURNING id, status, expires_at, user_id, version`
+
+	updatedOrder := new(entity.Order)
+	if err := r.SQL.QueryRowContext(
+		ctx,
+		stmt,
+		order.Status,
+		order.Version,
+		order.ID,
+		order.Version-1,
+	).Scan(
+		&updatedOrder.ID,
+		&updatedOrder.Status,
+		&updatedOrder.ExpiresAt,
+		&updatedOrder.UserID,
+		&updatedOrder.Version,
+	); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, &common.Error{
+				Code:    common.ENOTFOUND,
+				Message: "Order not found. Version probably out of sync",
+				Op:      "OrderRepository.UpdateOnEvent",
+				Err:     err,
+			}
+		}
+		return nil, &common.Error{Op: "orderRepository.UpdateOnEvent", Err: err}
+	}
+	updatedOrder.Ticket = order.Ticket
+
+	return updatedOrder, nil
+}
