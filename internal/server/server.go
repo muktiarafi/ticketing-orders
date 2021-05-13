@@ -60,10 +60,12 @@ func SetupServer() *echo.Echo {
 		log.Fatal(err)
 	}
 
-	orderConsumer := consumer.NewOrderConsumer(ticketRepository)
+	orderConsumer := consumer.NewOrderConsumer(orderProducer, orderRepository, ticketRepository)
 	commonConsumer := common.NewConsumer(subscriber)
 	commonConsumer.On(common.TicketCreated, orderConsumer.TicketCreated)
 	commonConsumer.On(common.TIcketUpdated, orderConsumer.TicketUpdated)
+	commonConsumer.On(common.ExpirationComplete, orderConsumer.ExpirationComplete)
+	commonConsumer.On(common.PaymentCreated, orderConsumer.PaymentCreated)
 
 	return e
 }
