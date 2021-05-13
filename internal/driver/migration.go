@@ -3,6 +3,7 @@ package driver
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -25,7 +26,7 @@ func Migration(migrationFilePath string, db *sql.DB) error {
 	}
 
 	if err := m.Up(); err != nil {
-		return err
+		log.Println(err)
 	}
 
 	return nil
