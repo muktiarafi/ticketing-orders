@@ -7,15 +7,21 @@ import (
 	common "github.com/muktiarafi/ticketing-common"
 	"github.com/muktiarafi/ticketing-common/types"
 	"github.com/muktiarafi/ticketing-orders/internal/entity"
+	"github.com/muktiarafi/ticketing-orders/internal/events/producer"
 	"github.com/muktiarafi/ticketing-orders/internal/repository"
+	"github.com/muktiarafi/ticketing-orders/internal/utils"
 )
 
 type OrderConsumer struct {
+	producer.OrderProducer
+	repository.OrderRepository
 	repository.TicketRepository
 }
 
-func NewOrderConsumer(ticketRepo repository.TicketRepository) *OrderConsumer {
+func NewOrderConsumer(producer producer.OrderProducer, orderRepo repository.OrderRepository, ticketRepo repository.TicketRepository) *OrderConsumer {
 	return &OrderConsumer{
+		OrderProducer:    producer,
+		OrderRepository:  orderRepo,
 		TicketRepository: ticketRepo,
 	}
 }
@@ -67,6 +73,74 @@ func (c *OrderConsumer) TicketUpdated(msg *message.Message) error {
 			msg.Nack()
 		}
 		return &common.Error{Op: "OrderConsumer.TicketUpdated", Err: err}
+	}
+
+	msg.Ack()
+
+	return nil
+}
+
+func (c *OrderConsumer) ExpirationComplete(msg *message.Message) error {
+	expirationCompleteData := new(types.ExpirationCompleteEvent)
+	if err := expirationCompleteData.Unmarshal(msg.Payload); err != nil {
+		msg.Nack()
+		return err
+	}
+
+	order, err := c.OrderRepository.FindOne(expirationCompleteData.OrderID)
+	if err != nil {
+		er, _ := err.(*common.Error)
+		if er.Code == common.ENOTFOUND {
+			msg.Ack()
+		} else {
+			msg.Nack()
+		}
+	}
+
+	if order.Status == utils.COMPLETED {
+		msg.Ack()
+		return nil
+	}
+
+	order.Status = utils.CANCELLED
+	order.Version++
+	if _, err := c.OrderRepository.Update(order); err != nil {
+		msg.Nack()
+		return err
+	}
+
+	if err := c.OrderProducer.Cancelled(order); err != nil {
+		msg.Nack()
+		return err
+	}
+
+	msg.Ack()
+
+	return nil
+}
+
+func (c *OrderConsumer) PaymentCreated(msg *message.Message) error {
+	paymentCreatedEventData := new(types.PaymentCreatedEvent)
+	if err := paymentCreatedEventData.Unmarshal(msg.Payload); err != nil {
+		msg.Nack()
+		return err
+	}
+
+	order, err := c.OrderRepository.FindOne(paymentCreatedEventData.OrderID)
+	if err != nil {
+		er, _ := err.(*common.Error)
+		if er.Code == common.ENOTFOUND {
+			msg.Ack()
+		} else {
+			msg.Nack()
+		}
+	}
+
+	order.Status = utils.COMPLETED
+	order.Version++
+	if _, err := c.OrderRepository.Update(order); err != nil {
+		msg.Nack()
+		return err
 	}
 
 	msg.Ack()
