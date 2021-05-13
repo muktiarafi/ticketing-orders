@@ -1,7 +1,7 @@
 package consumer
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/ThreeDotsLabs/watermill/message"
 	common "github.com/muktiarafi/ticketing-common"
@@ -27,7 +27,7 @@ func NewOrderConsumer(producer producer.OrderProducer, orderRepo repository.Orde
 }
 
 func (c *OrderConsumer) TicketCreated(msg *message.Message) error {
-	fmt.Println("received event from topic ", common.TicketCreated)
+	log.Println("received event from topic:", common.TicketCreated)
 	ticketCreatedData := new(types.TicketCreatedEvent)
 	if err := ticketCreatedData.Unmarshal(msg.Payload); err != nil {
 		msg.Nack()
@@ -51,7 +51,7 @@ func (c *OrderConsumer) TicketCreated(msg *message.Message) error {
 }
 
 func (c *OrderConsumer) TicketUpdated(msg *message.Message) error {
-	fmt.Println("received event from topic ", common.TIcketUpdated)
+	log.Println("received event from topic:", common.TIcketUpdated)
 	ticketUpdatedData := new(types.TicketUpdatedEvent)
 	if err := ticketUpdatedData.Unmarshal(msg.Payload); err != nil {
 		msg.Nack()
@@ -81,6 +81,7 @@ func (c *OrderConsumer) TicketUpdated(msg *message.Message) error {
 }
 
 func (c *OrderConsumer) ExpirationComplete(msg *message.Message) error {
+	log.Println("received event from topic:", common.ExpirationComplete)
 	expirationCompleteData := new(types.ExpirationCompleteEvent)
 	if err := expirationCompleteData.Unmarshal(msg.Payload); err != nil {
 		msg.Nack()
@@ -120,6 +121,7 @@ func (c *OrderConsumer) ExpirationComplete(msg *message.Message) error {
 }
 
 func (c *OrderConsumer) PaymentCreated(msg *message.Message) error {
+	log.Println("received event from topic:", common.PaymentCreated)
 	paymentCreatedEventData := new(types.PaymentCreatedEvent)
 	if err := paymentCreatedEventData.Unmarshal(msg.Payload); err != nil {
 		msg.Nack()
