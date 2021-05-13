@@ -22,7 +22,7 @@ func NewOrderConsumer(ticketRepo repository.TicketRepository) *OrderConsumer {
 
 func (c *OrderConsumer) TicketCreated(msg *message.Message) error {
 	fmt.Println("received event from topic ", common.TicketCreated)
-	var ticketCreatedData types.TicketCreatedEvent
+	ticketCreatedData := new(types.TicketCreatedEvent)
 	if err := ticketCreatedData.Unmarshal(msg.Payload); err != nil {
 		msg.Nack()
 		return &common.Error{Op: "OrderConsumer.TicketCreated", Err: err}
