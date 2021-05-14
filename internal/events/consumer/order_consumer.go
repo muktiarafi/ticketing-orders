@@ -6,10 +6,10 @@ import (
 	"github.com/ThreeDotsLabs/watermill/message"
 	common "github.com/muktiarafi/ticketing-common"
 	"github.com/muktiarafi/ticketing-common/types"
+	"github.com/muktiarafi/ticketing-orders/internal/constant"
 	"github.com/muktiarafi/ticketing-orders/internal/entity"
 	"github.com/muktiarafi/ticketing-orders/internal/events/producer"
 	"github.com/muktiarafi/ticketing-orders/internal/repository"
-	"github.com/muktiarafi/ticketing-orders/internal/utils"
 )
 
 type OrderConsumer struct {
@@ -99,12 +99,12 @@ func (c *OrderConsumer) ExpirationComplete(msg *message.Message) error {
 		return err
 	}
 
-	if order.Status == utils.COMPLETED {
+	if order.Status == constant.COMPLETED {
 		msg.Ack()
 		return nil
 	}
 
-	order.Status = utils.CANCELLED
+	order.Status = constant.CANCELLED
 	order.Version++
 	if _, err := c.OrderRepository.Update(order); err != nil {
 		msg.Nack()
@@ -139,7 +139,7 @@ func (c *OrderConsumer) PaymentCreated(msg *message.Message) error {
 		}
 	}
 
-	order.Status = utils.COMPLETED
+	order.Status = constant.COMPLETED
 	order.Version++
 	if _, err := c.OrderRepository.Update(order); err != nil {
 		msg.Nack()

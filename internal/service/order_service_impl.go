@@ -6,6 +6,7 @@ import (
 	"time"
 
 	common "github.com/muktiarafi/ticketing-common"
+	"github.com/muktiarafi/ticketing-orders/internal/constant"
 	"github.com/muktiarafi/ticketing-orders/internal/entity"
 	"github.com/muktiarafi/ticketing-orders/internal/repository"
 )
@@ -14,13 +15,6 @@ type OrderServiceImpl struct {
 	repository.OrderRepository
 	repository.TicketRepository
 }
-
-const (
-	CREATED   = "CREATED"
-	CANCELLED = "CANCELLED"
-	PENDING   = "PENDING"
-	COMPLETED = "COMPLETED"
-)
 
 func NewOrderService(orderRepo repository.OrderRepository, ticketRepo repository.TicketRepository) OrderService {
 	return &OrderServiceImpl{
@@ -52,7 +46,7 @@ func (s *OrderServiceImpl) Create(userID int64, ticketID int64) (*entity.Order, 
 	}
 
 	newOrder := &entity.Order{
-		Status:    CREATED,
+		Status:    constant.CREATED,
 		UserID:    userID,
 		Ticket:    ticket,
 		ExpiresAt: time.Now().Add(time.Second * 60),
@@ -102,7 +96,7 @@ func (s *OrderServiceImpl) Update(userID, orderID int64) (*entity.Order, error) 
 			Err:     errors.New("trying to access order not belonged to"),
 		}
 	}
-	order.Status = CANCELLED
+	order.Status = constant.CANCELLED
 
 	updatedOrder, err := s.OrderRepository.Update(order)
 	if err != nil {

@@ -1,4 +1,4 @@
-package utils
+package constant
 
 const (
 	CREATED   = "CREATED"
