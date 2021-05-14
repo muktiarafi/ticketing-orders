@@ -79,10 +79,11 @@ func (r *OrderRepositoryImpl) Find(userID int64) ([]*entity.Order, error) {
 	}
 	defer rows.Close()
 
-	order := new(entity.Order)
-	ticket := new(entity.Ticket)
 	orders := make([]*entity.Order, 0)
 	for rows.Next() {
+		order := new(entity.Order)
+		ticket := new(entity.Ticket)
+
 		if err := rows.Scan(
 			&order.ID,
 			&order.Status,
@@ -119,10 +120,11 @@ func (r *OrderRepositoryImpl) FindReserved(ticketID int64) ([]*entity.Order, err
 	}
 	defer rows.Close()
 
-	order := new(entity.Order)
-	ticket := new(entity.Ticket)
 	orders := make([]*entity.Order, 0)
 	for rows.Next() {
+		order := new(entity.Order)
+		ticket := new(entity.Ticket)
+
 		if err := rows.Scan(
 			&order.ID,
 			&order.Status,
