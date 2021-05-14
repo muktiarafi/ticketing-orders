@@ -51,5 +51,5 @@ func (p *OrderProducerImpl) Cancelled(order *entity.Order) error {
 	}
 
 	msg := message.NewMessage(watermill.NewUUID(), orderBytes)
-	return p.Publish(common.OrderCreated, msg)
+	return p.Publish(common.OrderCancelled, msg)
 }
