@@ -96,6 +96,7 @@ func (c *OrderConsumer) ExpirationComplete(msg *message.Message) error {
 		} else {
 			msg.Nack()
 		}
+		return err
 	}
 
 	if order.Status == utils.COMPLETED {
