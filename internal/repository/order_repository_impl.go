@@ -71,7 +71,8 @@ func (r *OrderRepositoryImpl) Find(userID int64) ([]*entity.Order, error) {
 	stmt := `SELECT o.id, status, expires_at, user_id, o.version, t.id, title, price, t.version
 	FROM orders AS o JOIN tickets AS t
 	ON o.ticket_id = t.id
-	WHERE o.user_id = $1`
+	WHERE o.user_id = $1
+	ORDER BY o.id`
 
 	rows, err := r.SQL.QueryContext(ctx, stmt, userID)
 	if err != nil {
