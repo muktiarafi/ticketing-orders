@@ -37,7 +37,6 @@ func SetupServer() *echo.Echo {
 
 	orderRepository := repository.NewOrderRepository(db)
 	ticketRepository := repository.NewTicketRepository(db)
-	orderService := service.NewOrderService(orderRepository, ticketRepository)
 
 	producerBrokers := []string{config.NewProducerBroker()}
 	commonPublisher, err := common.NewPublisher(producerBrokers, watermill.NewStdLogger(false, false))
@@ -45,8 +44,9 @@ func SetupServer() *echo.Echo {
 		log.Fatal(err)
 	}
 	orderProducer := producer.NewOrderProducer(commonPublisher)
+	orderService := service.NewOrderService(orderRepository, ticketRepository, orderProducer)
 
-	orderHandler := handler.NewOrderHandler(orderService, orderProducer)
+	orderHandler := handler.NewOrderHandler(orderService)
 	orderHandler.Route(e)
 
 	subscriberConfig := &common.SubscriberConfig{

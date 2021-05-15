@@ -7,20 +7,17 @@ import (
 
 	"github.com/labstack/echo/v4"
 	common "github.com/muktiarafi/ticketing-common"
-	"github.com/muktiarafi/ticketing-orders/internal/events/producer"
 	"github.com/muktiarafi/ticketing-orders/internal/model"
 	"github.com/muktiarafi/ticketing-orders/internal/service"
 )
 
 type OrderHandler struct {
 	service.OrderService
-	producer.OrderProducer
 }
 
-func NewOrderHandler(orderSrv service.OrderService, orderProducer producer.OrderProducer) *OrderHandler {
+func NewOrderHandler(orderSrv service.OrderService) *OrderHandler {
 	return &OrderHandler{
-		OrderService:  orderSrv,
-		OrderProducer: orderProducer,
+		OrderService: orderSrv,
 	}
 }
 
@@ -53,10 +50,6 @@ func (h *OrderHandler) Create(c echo.Context) error {
 
 	order, err := h.OrderService.Create(int64(userPayload.ID), orderDTO.TicketID)
 	if err != nil {
-		return err
-	}
-
-	if err := h.OrderProducer.Created(order); err != nil {
 		return err
 	}
 
@@ -132,10 +125,6 @@ func (h *OrderHandler) Update(c echo.Context) error {
 
 	order, err := h.OrderService.Update(int64(userPayload.ID), orderID)
 	if err != nil {
-		return err
-	}
-
-	if err := h.OrderProducer.Cancelled(order); err != nil {
 		return err
 	}
 

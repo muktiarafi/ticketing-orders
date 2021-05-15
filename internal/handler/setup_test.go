@@ -48,10 +48,11 @@ func TestMain(m *testing.M) {
 
 	ticketRepo = repository.NewTicketRepository(db)
 	orderRepository := repository.NewOrderRepository(db)
-	orderService := service.NewOrderService(orderRepository, ticketRepo)
 
 	orderPublisher := &OrderPublisherStub{}
-	orderHandler := NewOrderHandler(orderService, orderPublisher)
+	orderService := service.NewOrderService(orderRepository, ticketRepo, orderPublisher)
+
+	orderHandler := NewOrderHandler(orderService)
 	orderHandler.Route(router)
 
 	code := m.Run()

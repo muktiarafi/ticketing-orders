@@ -8,18 +8,25 @@ import (
 	common "github.com/muktiarafi/ticketing-common"
 	"github.com/muktiarafi/ticketing-orders/internal/constant"
 	"github.com/muktiarafi/ticketing-orders/internal/entity"
+	"github.com/muktiarafi/ticketing-orders/internal/events/producer"
 	"github.com/muktiarafi/ticketing-orders/internal/repository"
 )
 
 type OrderServiceImpl struct {
 	repository.OrderRepository
 	repository.TicketRepository
+	producer.OrderProducer
 }
 
-func NewOrderService(orderRepo repository.OrderRepository, ticketRepo repository.TicketRepository) OrderService {
+func NewOrderService(
+	orderRepo repository.OrderRepository,
+	ticketRepo repository.TicketRepository,
+	orderProducer producer.OrderProducer,
+) OrderService {
 	return &OrderServiceImpl{
 		OrderRepository:  orderRepo,
 		TicketRepository: ticketRepo,
+		OrderProducer:    orderProducer,
 	}
 }
 
@@ -54,6 +61,10 @@ func (s *OrderServiceImpl) Create(userID int64, ticketID int64) (*entity.Order, 
 
 	newOrder, err = s.OrderRepository.Insert(newOrder)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := s.OrderProducer.Created(newOrder); err != nil {
 		return nil, err
 	}
 
@@ -100,6 +111,10 @@ func (s *OrderServiceImpl) Update(userID, orderID int64) (*entity.Order, error) 
 
 	updatedOrder, err := s.OrderRepository.Update(order)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := s.OrderProducer.Cancelled(updatedOrder); err != nil {
 		return nil, err
 	}
 
